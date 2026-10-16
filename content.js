@@ -1,7 +1,7 @@
 (async () => {
   const buttons = [
-    { id: "solvemangu-left", mode: "detailed", label: "Resolver ejercicio y copiar respuesta" },
-    { id: "solvemangu-right", mode: "quick", label: "Mostrar respuesta rápida tipo test" },
+    { id: "solvemangu-left", mode: "detailed", label: "Resolver ejercicio y copiar respuesta", symbol: "L" },
+    { id: "solvemangu-right", mode: "quick", label: "Mostrar respuesta rápida tipo test", symbol: "R" },
   ];
 
   async function initializeAssistant() {
@@ -30,6 +30,7 @@
       button.id = config.id;
       button.type = "button";
       button.className = "solvemangu-touch-zone";
+      button.textContent = config.symbol;
       button.title = config.label;
       button.setAttribute("aria-label", config.label);
       button.addEventListener("click", async () => {
