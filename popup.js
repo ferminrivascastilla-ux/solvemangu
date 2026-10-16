@@ -96,7 +96,11 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     try {
       await chrome.storage.local.set({ buttonVisibility: selectedVisibility });
-      showMessage("Visibilidad de los botones actualizada.");
+      const result = await chrome.runtime.sendMessage({ type: "BUTTON_VISIBILITY_UPDATED" });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      showMessage("Visibilidad actualizada en las pestañas compatibles.");
     } catch (error) {
       showMessage(`No se pudo actualizar la visibilidad: ${error.message}`, true);
       await refresh();

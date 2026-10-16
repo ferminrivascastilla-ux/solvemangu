@@ -33,6 +33,7 @@
 
 #solvemangu-left { left: 0 !important; }
 #solvemangu-right { right: 0 !important; }
+.solvemangu-touch-zone[hidden],
 .solvemangu-touch-zone[data-visibility="off"] {
   display: none !important;
   pointer-events: none !important;

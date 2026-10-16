@@ -124,7 +124,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 });
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  if (message?.type === "KEY_UPDATED") {
+  if (message?.type === "KEY_UPDATED" || message?.type === "BUTTON_VISIBILITY_UPDATED") {
     reconcileAllTabs().then(() => sendResponse({ ok: true }), (error) => sendResponse({ error: error.message }));
     return true;
   }
