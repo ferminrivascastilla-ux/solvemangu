@@ -1,10 +1,10 @@
-# NVIDIA Multimodal Assistant
+# SolveMangu Vision
 
-Extensión local de Chrome (Manifest V3) para resolver ejercicios visibles en una página con el modelo multimodal de NVIDIA.
+Extensión local de Chrome (Manifest V3) que extrae texto de capturas con Tesseract.js local y resuelve ejercicios usando OpenRouter.
 
 ## Instalar en modo desarrollador
 
-1. Descarga o clona este repositorio en tu computadora.
+1. Descarga o clona este repositorio y ejecuta `npm install` en su carpeta para instalar Tesseract.js y los datos OCR en español.
 2. En Chrome, abre `chrome://extensions`.
 3. Activa **Modo de desarrollador**.
 4. Selecciona **Cargar descomprimida** y elige la carpeta del repositorio que contiene `manifest.json`.
@@ -12,12 +12,12 @@ Extensión local de Chrome (Manifest V3) para resolver ejercicios visibles en un
 
 ## Usar
 
-1. Pulsa el icono de la extensión y guarda tu NVIDIA API Key.
-2. En una página compatible, pulsa el control tenue del borde izquierdo para resolver el ejercicio y copiar la respuesta.
-3. Pulsa el control del borde derecho para mostrar brevemente la opción correcta tipo test.
+1. Pulsa el icono de la extensión y guarda tu API Key de OpenRouter.
+2. En una página compatible, pulsa la zona táctil invisible del borde izquierdo para resolver el ejercicio y copiar la respuesta.
+3. Pulsa la zona táctil del borde derecho para mostrar brevemente la opción correcta tipo test.
 4. Abre el popup para revisar las capturas y respuestas guardadas, cambiar la clave o borrarla.
 
-La extensión llama a `https://integrate.api.nvidia.com/v1/chat/completions` usando el modelo `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`. Necesita una clave válida y conexión a Internet. Chrome bloquea la inyección en páginas internas como `chrome://` y en algunas páginas protegidas.
+La extensión realiza el OCR en el dispositivo y envía la captura y el texto detectado a `https://openrouter.ai/api/v1/chat/completions` usando el modelo gratuito `openrouter/free`. Necesita una clave válida y conexión a Internet. Chrome bloquea la inyección en páginas internas como `chrome://` y en algunas páginas protegidas.
 
 ## Almacenamiento de la clave
 

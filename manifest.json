@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Nvidia Multimodal Assistant",
-  "version": "1.0",
-  "description": "Analiza imágenes locales usando la API multimodal de NVIDIA",
+  "name": "SolveMangu Vision",
+  "version": "1.1.0",
+  "description": "Resuelve ejercicios con OCR local y OpenRouter",
   "permissions": [
     "storage",
     "activeTab",
@@ -12,7 +12,7 @@
     "unlimitedStorage"
   ],
   "host_permissions": [
-    "https://integrate.api.nvidia.com/*",
+    "https://openrouter.ai/*",
     "<all_urls>"
   ],
   "action": {
@@ -20,5 +20,18 @@
   },
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "node_modules/tesseract.js/dist/worker.min.js",
+        "node_modules/tesseract.js-core/*",
+        "node_modules/@tesseract.js-data/spa/4.0.0/*"
+      ],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }

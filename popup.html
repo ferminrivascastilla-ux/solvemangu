@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NVIDIA AI Vision</title>
+  <title>SolveMangu Vision</title>
   <style>
     :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; color: #1b241c; background: #f2f4ed; }
     * { box-sizing: border-box; }
@@ -43,18 +43,18 @@
 </head>
 <body>
   <header>
-    <div class="mark" aria-hidden="true">N</div>
-    <div><h1>NVIDIA AI Vision</h1><p class="eyebrow">Asistente de pantalla</p></div>
+    <div class="mark" aria-hidden="true">S</div>
+    <div><h1>SolveMangu Vision</h1><p class="eyebrow">OCR local · OpenRouter</p></div>
   </header>
 
   <section class="section" aria-labelledby="keyTitle">
     <div class="key-row" id="activeKey" hidden>
-      <p class="section-title key-status" id="keyTitle">API Key activa</p>
+      <p class="section-title key-status" id="keyTitle">OpenRouter activa</p>
       <button class="danger" id="deleteKey" type="button">Borrar</button>
     </div>
     <form id="keyForm">
-      <label for="apiKey" id="keyLabel">Configura tu NVIDIA API Key</label>
-      <input type="password" id="apiKey" placeholder="nvapi-..." autocomplete="off" required>
+      <label for="apiKey" id="keyLabel">Configura tu API Key de OpenRouter</label>
+      <input type="password" id="apiKey" placeholder="sk-or-v1-..." autocomplete="off" required>
       <button id="saveKey" type="submit">Guardar clave</button>
     </form>
     <p id="message" role="status" aria-live="polite"></p>

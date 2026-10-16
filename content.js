@@ -1,53 +1,77 @@
 (async () => {
   const buttons = [
-    { id: "nvidia-assistant-left", mode: "detailed", label: "Resolver ejercicio y copiar respuesta", symbol: "L" },
-    { id: "nvidia-assistant-right", mode: "quick", label: "Mostrar respuesta rápida tipo test", symbol: "R" },
+    { id: "solvemangu-left", mode: "detailed", label: "Resolver ejercicio y copiar respuesta" },
+    { id: "solvemangu-right", mode: "quick", label: "Mostrar respuesta rápida tipo test" },
   ];
 
   async function initializeAssistant() {
-    const { nvidiaApiKey } = await chrome.storage.local.get("nvidiaApiKey");
-    if (!nvidiaApiKey || document.getElementById(buttons[0].id)) {
+    const { openrouterApiKey } = await chrome.storage.local.get("openrouterApiKey");
+    if (!openrouterApiKey || document.getElementById(buttons[0].id)) {
       return;
     }
 
-    function showResult(text, quick) {
-      document.getElementById("nvidia-assistant-result")?.remove();
-      const result = document.createElement("div");
-      result.id = "nvidia-assistant-result";
-      result.textContent = text;
-      result.className = quick ? "nvidia-assistant-result-quick" : "nvidia-assistant-result-detail";
-      document.documentElement.append(result);
-      window.setTimeout(() => result.remove(), quick ? 400 : 2200);
+    let indicatorTimeout;
+    function showIndicator(text, duration = 0) {
+      window.clearTimeout(indicatorTimeout);
+      let indicator = document.getElementById("solvemangu-indicator");
+      if (!indicator) {
+        indicator = document.createElement("div");
+        indicator.id = "solvemangu-indicator";
+        document.documentElement.append(indicator);
+      }
+      indicator.textContent = text;
+      if (duration) {
+        indicatorTimeout = window.setTimeout(() => indicator.remove(), duration);
+      }
     }
 
     for (const config of buttons) {
       const button = document.createElement("button");
       button.id = config.id;
       button.type = "button";
-      button.className = "nvidia-assistant-button";
-      button.textContent = config.symbol;
+      button.className = "solvemangu-touch-zone";
       button.title = config.label;
       button.setAttribute("aria-label", config.label);
       button.addEventListener("click", async () => {
-        button.disabled = true;
-        button.classList.add("nvidia-assistant-working");
-        showResult("…", config.mode === "quick");
+        showIndicator("...");
         try {
-          const result = await chrome.runtime.sendMessage({ type: "SOLVE_VISIBLE_TAB", mode: config.mode });
-          if (result?.error) {
-            throw new Error(result.error);
+          const capture = await chrome.runtime.sendMessage({ type: "CAPTURE_VISIBLE_TAB" });
+          if (capture?.error) {
+            throw new Error(capture.error);
           }
+
+          const worker = await Tesseract.createWorker("spa", 1, {
+            workerPath: chrome.runtime.getURL("node_modules/tesseract.js/dist/worker.min.js"),
+            corePath: chrome.runtime.getURL("node_modules/tesseract.js-core"),
+            langPath: chrome.runtime.getURL("node_modules/@tesseract.js-data/spa/4.0.0"),
+            gzip: true,
+            workerBlobURL: false,
+          });
+          let ocrText = "";
+          try {
+            const recognition = await worker.recognize(capture.imageDataUrl);
+            ocrText = recognition.data.text || "";
+          } finally {
+            await worker.terminate();
+          }
+
+          const result = await chrome.runtime.sendMessage({
+            type: "SOLVE_OCR_CAPTURE",
+            mode: config.mode,
+            imageDataUrl: capture.imageDataUrl,
+            ocrText,
+          });
+          if (result?.error) throw new Error(result.error);
+
           if (config.mode === "detailed") {
             await navigator.clipboard.writeText(result.answer);
-            showResult("Respuesta copiada", false);
+            showIndicator("⬛", 400);
           } else {
-            showResult(result.answer, true);
+            showIndicator(result.answer, 400);
           }
         } catch (error) {
-          showResult(error.message || "No se pudo analizar la pantalla", false);
-        } finally {
-          button.disabled = false;
-          button.classList.remove("nvidia-assistant-working");
+          console.error("SolveMangu:", error);
+          showIndicator("🔺", 1600);
         }
       });
       document.documentElement.append(button);

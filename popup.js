@@ -56,14 +56,14 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function refresh() {
-    const { nvidiaApiKey, queryHistory = [] } = await chrome.storage.local.get(["nvidiaApiKey", "queryHistory"]);
-    const configured = Boolean(nvidiaApiKey);
+    const { openrouterApiKey, queryHistory = [] } = await chrome.storage.local.get(["openrouterApiKey", "queryHistory"]);
+    const configured = Boolean(openrouterApiKey);
     activeKey.hidden = !configured;
     keyForm.hidden = false;
-    keyLabel.textContent = configured ? "Cambiar NVIDIA API Key" : "Configura tu NVIDIA API Key";
+    keyLabel.textContent = configured ? "Cambiar API Key de OpenRouter" : "Configura tu API Key de OpenRouter";
     apiKeyInput.required = !configured;
     apiKeyInput.value = "";
-    apiKeyInput.placeholder = configured ? "Dejar vacío para mantenerla" : "nvapi-...";
+    apiKeyInput.placeholder = configured ? "Dejar vacío para mantenerla" : "sk-or-v1-...";
     saveButton.textContent = configured ? "Actualizar clave" : "Guardar clave";
     renderHistory(queryHistory);
   }
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     saveButton.disabled = true;
     try {
-      await chrome.storage.local.set({ nvidiaApiKey: apiKey });
+      await chrome.storage.local.set({ openrouterApiKey: apiKey });
       await chrome.runtime.sendMessage({ type: "KEY_UPDATED" });
       showMessage("Clave guardada. Los botones están activados en las páginas compatibles.");
       await refresh();
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
   deleteButton.addEventListener("click", async () => {
     deleteButton.disabled = true;
     try {
-      await chrome.storage.local.remove("nvidiaApiKey");
+      await chrome.storage.local.remove("openrouterApiKey");
       await chrome.runtime.sendMessage({ type: "KEY_UPDATED" });
       showMessage("Clave eliminada y botones desactivados.");
       await refresh();

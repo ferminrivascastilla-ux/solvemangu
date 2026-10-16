@@ -1,18 +1,18 @@
-const API_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const MODEL = "nvidia/nemotron-3-nano-omni-30b-a3b-reasoning";
+const API_URL = "https://openrouter.ai/api/v1/chat/completions";
+const MODEL = "openrouter/free";
 const PROMPTS = {
-  detailed: "Resuelve este ejercicio de forma detallada",
-  quick: "Devuelve ÚNICAMENTE la letra u opción correcta (ejemplo: A, B, C, D o 1, 2, 3, 4) sin ningún texto adicional",
+  detailed: "Resuelve este ejercicio de forma concisa y directa",
+  quick: "Devuelve ÚNICAMENTE la letra u opción correcta (ejemplo: A, B, C, D o 1, 2, 3, 4) sin ninguna palabra adicional",
 };
 
 async function reconcileTab(tabId) {
-  const { nvidiaApiKey } = await chrome.storage.local.get("nvidiaApiKey");
+  const { openrouterApiKey } = await chrome.storage.local.get("openrouterApiKey");
   const target = { tabId };
-  if (!nvidiaApiKey) {
+  if (!openrouterApiKey) {
     try {
       await chrome.scripting.executeScript({
         target,
-        func: () => document.querySelectorAll("#nvidia-assistant-left, #nvidia-assistant-right, #nvidia-assistant-result").forEach((element) => element.remove()),
+        func: () => document.querySelectorAll("#solvemangu-left, #solvemangu-right, #solvemangu-indicator, #nvidia-assistant-left, #nvidia-assistant-right, #nvidia-assistant-result").forEach((element) => element.remove()),
       });
       await chrome.scripting.removeCSS({ target, files: ["styles.css"] });
     } catch {
@@ -23,7 +23,10 @@ async function reconcileTab(tabId) {
 
   try {
     await chrome.scripting.insertCSS({ target, files: ["styles.css"] });
-    await chrome.scripting.executeScript({ target, files: ["content.js"] });
+    await chrome.scripting.executeScript({
+      target,
+      files: ["node_modules/tesseract.js/dist/tesseract.min.js", "content.js"],
+    });
   } catch {
     // Browser-internal pages and restricted origins cannot be scripted.
   }
@@ -39,36 +42,48 @@ async function saveHistory(entry) {
   await chrome.storage.local.set({ queryHistory: [entry, ...queryHistory] });
 }
 
-async function solveVisibleTab(mode, tab) {
+async function captureVisibleTab(tab) {
   if (!tab || !Number.isInteger(tab.windowId)) {
     throw new Error("No se encontró la pestaña activa.");
   }
-  const { nvidiaApiKey } = await chrome.storage.local.get("nvidiaApiKey");
-  if (!nvidiaApiKey) {
-    throw new Error("Configura primero tu NVIDIA API Key desde el popup.");
+  const { openrouterApiKey } = await chrome.storage.local.get("openrouterApiKey");
+  if (!openrouterApiKey) {
+    throw new Error("Configura primero tu API Key de OpenRouter desde el popup.");
   }
 
   const imageDataUrl = await chrome.tabs.captureVisibleTab(tab.windowId, { format: "png" });
+  return { imageDataUrl };
+}
+
+async function solveWithOpenRouter(mode, imageDataUrl, ocrText) {
+  const { openrouterApiKey } = await chrome.storage.local.get("openrouterApiKey");
+  if (!openrouterApiKey) {
+    throw new Error("Configura primero tu API Key de OpenRouter desde el popup.");
+  }
+
   const prompt = PROMPTS[mode] || PROMPTS.detailed;
+  const textContent = ocrText.trim()
+    ? `${prompt}\n\nTexto extraído localmente de la captura:\n${ocrText.trim()}`
+    : `${prompt}\n\nNo se pudo extraer texto con OCR; analiza la captura adjunta.`;
   const response = await fetch(API_URL, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${nvidiaApiKey}`,
+      Authorization: `Bearer ${openrouterApiKey}`,
       "Content-Type": "application/json",
       Accept: "application/json",
+      "X-Title": "SolveMangu Vision",
     },
     body: JSON.stringify({
       messages: [{
         role: "user",
         content: [
+          { type: "text", text: textContent },
           { type: "image_url", image_url: { url: imageDataUrl } },
-          { type: "text", text: prompt },
         ],
       }],
       model: MODEL,
-      max_tokens: mode === "quick" ? 64 : 1024,
-      temperature: mode === "quick" ? 0.2 : 0.6,
-      top_p: 0.95,
+      max_tokens: mode === "quick" ? 64 : 512,
+      temperature: mode === "quick" ? 0.1 : 0.3,
     }),
   });
 
@@ -80,12 +95,12 @@ async function solveVisibleTab(mode, tab) {
     data = null;
   }
   if (!response.ok) {
-    throw new Error(data?.error?.message || `Error HTTP: ${response.status}`);
+    throw new Error(data?.error?.message || `Error de OpenRouter (HTTP ${response.status})`);
   }
 
   const answer = data?.choices?.[0]?.message?.content;
   if (typeof answer !== "string" || !answer.trim()) {
-    throw new Error("NVIDIA no devolvió una respuesta.");
+    throw new Error("OpenRouter no devolvió una respuesta.");
   }
 
   await saveHistory({
@@ -95,6 +110,7 @@ async function solveVisibleTab(mode, tab) {
     prompt,
     answer: answer.trim(),
     imageDataUrl,
+    ocrText: ocrText.trim(),
   });
   return { answer: answer.trim() };
 }
@@ -112,8 +128,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     reconcileAllTabs().then(() => sendResponse({ ok: true }), (error) => sendResponse({ error: error.message }));
     return true;
   }
-  if (message?.type === "SOLVE_VISIBLE_TAB") {
-    solveVisibleTab(message.mode, sender.tab)
+  if (message?.type === "CAPTURE_VISIBLE_TAB") {
+    captureVisibleTab(sender.tab)
+      .then((result) => sendResponse(result))
+      .catch((error) => sendResponse({ error: error.message }));
+    return true;
+  }
+  if (message?.type === "SOLVE_OCR_CAPTURE") {
+    solveWithOpenRouter(message.mode, message.imageDataUrl, message.ocrText || "")
       .then((result) => sendResponse(result))
       .catch((error) => sendResponse({ error: error.message }));
     return true;
