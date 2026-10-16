@@ -13,9 +13,10 @@ Extensión local de Chrome (Manifest V3) que extrae texto de capturas con Tesser
 ## Usar
 
 1. Pulsa el icono de la extensión y guarda tu API Key de OpenRouter.
-2. En una página compatible, pulsa la zona táctil invisible del borde izquierdo para resolver el ejercicio y copiar la respuesta.
-3. Pulsa la zona táctil del borde derecho para mostrar brevemente la opción correcta tipo test.
-4. Abre el popup para revisar las capturas y respuestas guardadas, cambiar la clave o borrarla.
+2. En una página compatible, pulsa el botón del borde izquierdo para resolver el ejercicio y copiar la respuesta.
+3. Pulsa el botón del borde derecho para mostrar brevemente la opción correcta tipo test.
+4. Pulsa el logotipo del popup para elegir si los botones laterales están apagados, camuflados o visibles.
+5. Abre el popup para revisar las capturas y respuestas guardadas, cambiar la clave o borrarla.
 
 La extensión realiza el OCR en el dispositivo y envía la captura y el texto detectado a `https://openrouter.ai/api/v1/chat/completions` usando el modelo gratuito `openrouter/free`. Necesita una clave válida y conexión a Internet. Chrome bloquea la inyección en páginas internas como `chrome://` y en algunas páginas protegidas.
 

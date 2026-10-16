@@ -9,18 +9,19 @@
   margin: 0 !important;
   padding: 0 !important;
   transform: translateY(-50%) !important;
-  border: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  border-radius: 4px !important;
   outline: 0 !important;
   box-shadow: none !important;
   appearance: none !important;
   -webkit-appearance: none !important;
-  background: transparent !important;
+  background: rgba(0, 0, 0, 0.04) !important;
   background-image: none !important;
   color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-  -webkit-text-stroke: 0.35px rgba(0, 0, 0, 0.95) !important;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95) !important;
-  font: bold 12px/1 Arial, sans-serif !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
+  -webkit-text-stroke: 0.15px rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.65) !important;
+  font: 500 11px/1 Arial, sans-serif !important;
   text-align: center !important;
   opacity: 1 !important;
   cursor: pointer !important;
@@ -32,21 +33,56 @@
 
 #solvemangu-left { left: 0 !important; }
 #solvemangu-right { right: 0 !important; }
+.solvemangu-touch-zone[data-visibility="off"] {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.solvemangu-touch-zone[data-visibility="visible"] {
+  width: 42px !important;
+  height: 88px !important;
+  border: 1px solid #4f7d00 !important;
+  border-radius: 6px !important;
+  background: #76b900 !important;
+  color: #172000 !important;
+  -webkit-text-fill-color: #172000 !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
+  font: bold 15px/1 Arial, sans-serif !important;
+}
+
+.solvemangu-touch-zone[data-visibility="visible"]:hover,
+.solvemangu-touch-zone[data-visibility="visible"]:active {
+  background: #68a500 !important;
+}
+
 .solvemangu-touch-zone:hover,
 .solvemangu-touch-zone:active,
 .solvemangu-touch-zone:focus,
 .solvemangu-touch-zone:focus-visible {
-  border: 0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
   outline: 0 !important;
   box-shadow: none !important;
-  background: transparent !important;
+  background: rgba(0, 0, 0, 0.08) !important;
   background-image: none !important;
-  color: #fff !important;
-  -webkit-text-fill-color: #fff !important;
-  -webkit-text-stroke: 0.35px rgba(0, 0, 0, 0.95) !important;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95) !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.85) !important;
+  -webkit-text-stroke: 0.15px rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.65) !important;
   opacity: 1 !important;
   transition: none !important;
+}
+
+.solvemangu-touch-zone[data-visibility="visible"]:hover,
+.solvemangu-touch-zone[data-visibility="visible"]:active,
+.solvemangu-touch-zone[data-visibility="visible"]:focus,
+.solvemangu-touch-zone[data-visibility="visible"]:focus-visible {
+  border-color: #4f7d00 !important;
+  background: #68a500 !important;
+  color: #172000 !important;
+  -webkit-text-fill-color: #172000 !important;
+  -webkit-text-stroke: 0 !important;
+  text-shadow: none !important;
 }
 
 #solvemangu-indicator {
@@ -60,8 +96,8 @@
   border: 0 !important;
   background: transparent !important;
   color: #fff !important;
-  -webkit-text-stroke: 0.35px rgba(0, 0, 0, 0.95) !important;
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95) !important;
+  -webkit-text-stroke: 0.15px rgba(0, 0, 0, 0.8) !important;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.65) !important;
   font: bold 13px/1.2 Arial, sans-serif !important;
   text-align: center !important;
   pointer-events: none !important;

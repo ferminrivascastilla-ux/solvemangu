@@ -10,6 +10,21 @@
       return;
     }
 
+    function applyButtonVisibility(visibility) {
+      const selectedVisibility = ["off", "camouflaged", "visible"].includes(visibility)
+        ? visibility
+        : "camouflaged";
+      buttons.forEach(({ id }) => {
+        const button = document.getElementById(id);
+        if (button) {
+          button.dataset.visibility = selectedVisibility;
+          button.hidden = selectedVisibility === "off";
+        }
+      });
+    }
+
+    const { buttonVisibility } = await chrome.storage.local.get("buttonVisibility");
+
     let indicatorTimeout;
     function showIndicator(text, duration = 0) {
       window.clearTimeout(indicatorTimeout);
@@ -33,6 +48,7 @@
       button.textContent = config.symbol;
       button.title = config.label;
       button.setAttribute("aria-label", config.label);
+      button.dataset.visibility = "camouflaged";
       button.addEventListener("click", async () => {
         showIndicator("...");
         try {
@@ -77,7 +93,14 @@
       });
       document.documentElement.append(button);
     }
+
+    applyButtonVisibility(buttonVisibility);
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName === "local" && changes.buttonVisibility) {
+        applyButtonVisibility(changes.buttonVisibility.newValue);
+      }
+    });
   }
 
-  initializeAssistant().catch(() => {});
+  initializeAssistant().catch((error) => console.error("SolveMangu: no se pudieron crear los botones laterales.", error));
 })();

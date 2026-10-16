@@ -7,6 +7,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const deleteButton = document.getElementById("deleteKey");
   const message = document.getElementById("message");
   const historyContainer = document.getElementById("history");
+  const logoMenuButton = document.getElementById("logoMenuButton");
+  const buttonVisibility = document.getElementById("buttonVisibility");
+  const visibilityOptions = document.getElementById("visibilityOptions");
+  const visibilityValues = ["off", "camouflaged", "visible"];
 
   function showMessage(text, isError = false) {
     message.textContent = text;
@@ -56,7 +60,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function refresh() {
-    const { openrouterApiKey, queryHistory = [] } = await chrome.storage.local.get(["openrouterApiKey", "queryHistory"]);
+    const { openrouterApiKey, queryHistory = [], buttonVisibility: savedVisibility } = await chrome.storage.local.get([
+      "openrouterApiKey",
+      "queryHistory",
+      "buttonVisibility",
+    ]);
+    const selectedVisibility = visibilityValues.includes(savedVisibility) ? savedVisibility : "camouflaged";
     const configured = Boolean(openrouterApiKey);
     activeKey.hidden = !configured;
     keyForm.hidden = false;
@@ -65,8 +74,38 @@ document.addEventListener("DOMContentLoaded", () => {
     apiKeyInput.value = "";
     apiKeyInput.placeholder = configured ? "Dejar vacío para mantenerla" : "sk-or-v1-...";
     saveButton.textContent = configured ? "Actualizar clave" : "Guardar clave";
+    visibilityOptions.querySelectorAll('input[name="buttonVisibility"]').forEach((input) => {
+      input.checked = input.value === selectedVisibility;
+    });
     renderHistory(queryHistory);
   }
+
+  logoMenuButton.addEventListener("click", () => {
+    buttonVisibility.hidden = !buttonVisibility.hidden;
+    logoMenuButton.setAttribute("aria-expanded", String(!buttonVisibility.hidden));
+  });
+
+  visibilityOptions.addEventListener("change", async (event) => {
+    const selectedVisibility = event.target.value;
+    if (!visibilityValues.includes(selectedVisibility)) {
+      return;
+    }
+
+    visibilityOptions.querySelectorAll("input").forEach((input) => {
+      input.disabled = true;
+    });
+    try {
+      await chrome.storage.local.set({ buttonVisibility: selectedVisibility });
+      showMessage("Visibilidad de los botones actualizada.");
+    } catch (error) {
+      showMessage(`No se pudo actualizar la visibilidad: ${error.message}`, true);
+      await refresh();
+    } finally {
+      visibilityOptions.querySelectorAll("input").forEach((input) => {
+        input.disabled = false;
+      });
+    }
+  });
 
   keyForm.addEventListener("submit", async (event) => {
     event.preventDefault();

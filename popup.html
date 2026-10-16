@@ -9,11 +9,18 @@
     * { box-sizing: border-box; }
     body { width: 360px; max-height: 560px; margin: 0; padding: 18px; overflow-y: auto; }
     header { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid #cbd1c4; }
-    .mark { display: grid; place-items: center; width: 32px; height: 32px; background: #76b900; color: #172000; font: bold 16px Arial, sans-serif; }
+    .mark { display: grid; flex: 0 0 32px; place-items: center; width: 32px; height: 32px; padding: 0; background: #76b900; color: #172000; font: bold 16px Arial, sans-serif; }
+    .mark:hover { background: #68a500; }
+    .mark:focus-visible { outline: 2px solid #303a2d; outline-offset: 2px; }
     h1 { margin: 0; font-size: 19px; font-weight: 600; }
     .eyebrow { margin: 2px 0 0; color: #64705e; font: 10px Arial, sans-serif; letter-spacing: 0; text-transform: uppercase; }
     .section { padding: 15px 0; border-bottom: 1px solid #cbd1c4; }
     .section-title { margin: 0 0 10px; font: bold 12px Arial, sans-serif; }
+    #buttonVisibility { padding: 12px 0 0; }
+    #buttonVisibility[hidden] { display: none; }
+    #visibilityOptions { display: grid; gap: 8px; }
+    #visibilityOptions label { display: flex; align-items: flex-start; gap: 7px; margin: 0; color: #303a2d; font: 12px/1.35 Arial, sans-serif; cursor: pointer; }
+    #visibilityOptions input { width: auto; margin: 1px 0 0; accent-color: #5c9000; }
     label { display: block; margin-bottom: 5px; color: #56604f; font: bold 11px Arial, sans-serif; }
     input { width: 100%; padding: 9px 10px; border: 1px solid #aeb8a5; border-radius: 3px; background: #fff; color: #1b241c; font: 13px Arial, sans-serif; }
     button { min-height: 34px; padding: 8px 11px; border: 0; border-radius: 3px; background: #76b900; color: #172000; font: bold 12px Arial, sans-serif; cursor: pointer; }
@@ -43,9 +50,18 @@
 </head>
 <body>
   <header>
-    <div class="mark" aria-hidden="true">S</div>
+    <button class="mark" id="logoMenuButton" type="button" aria-label="Mostrar visibilidad de los botones" aria-expanded="false" aria-controls="buttonVisibility">S</button>
     <div><h1>SolveMangu Vision</h1><p class="eyebrow">OCR local · OpenRouter</p></div>
   </header>
+
+  <section class="section" id="buttonVisibility" aria-labelledby="visibilityTitle" hidden>
+    <h2 class="section-title" id="visibilityTitle">Visibilidad de los botones laterales</h2>
+    <div id="visibilityOptions" role="radiogroup" aria-labelledby="visibilityTitle">
+      <label><input type="radio" name="buttonVisibility" value="off"> Apagados: no se muestran ni se pueden pulsar</label>
+      <label><input type="radio" name="buttonVisibility" value="camouflaged"> Camuflados: letra y borde finos, con fondo transparente</label>
+      <label><input type="radio" name="buttonVisibility" value="visible"> Visibles: botones con color de fondo</label>
+    </div>
+  </section>
 
   <section class="section" aria-labelledby="keyTitle">
     <div class="key-row" id="activeKey" hidden>
