@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Nvidia Multimodal Assistant",
+  "version": "1.0",
+  "description": "Analiza imágenes locales usando la API multimodal de NVIDIA",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://integrate.api.nvidia.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  }
+}

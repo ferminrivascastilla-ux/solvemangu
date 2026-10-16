@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NVIDIA AI Vision</title>
+  <style>
+    body { width: 340px; font-family: Arial, sans-serif; padding: 16px; margin: 0; background: #f5f7f2; color: #20251c; }
+    h1 { margin: 0 0 16px; font-size: 18px; }
+    .field { margin-bottom: 13px; }
+    label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #4c5545; }
+    input[type="password"], input[type="file"], textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #b9c0b3; border-radius: 4px; background: #fff; color: #20251c; }
+    textarea { resize: vertical; }
+    button { width: 100%; padding: 10px; background: #76b900; color: #142000; border: 0; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    button:hover { background: #67a300; }
+    button:disabled { cursor: wait; opacity: 0.65; }
+    #output { margin-top: 14px; max-height: 220px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #d2d7cd; border-radius: 4px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .status { color: #626a5b; font-style: italic; }
+    .error { color: #a12828; }
+  </style>
+</head>
+<body>
+  <h1>NVIDIA AI Vision</h1>
+
+  <div class="field">
+    <label for="apiKey">NVIDIA API Key</label>
+    <input type="password" id="apiKey" placeholder="nvapi-..." autocomplete="off">
+  </div>
+
+  <div class="field">
+    <label for="imageInput">Selecciona una imagen</label>
+    <input type="file" id="imageInput" accept="image/*">
+  </div>
+
+  <div class="field">
+    <label for="prompt">Pregunta para la IA</label>
+    <textarea id="prompt" rows="3">What is in this image?</textarea>
+  </div>
+
+  <button id="sendBtn" type="button">Analizar imagen</button>
+  <div id="output" class="status" role="status" aria-live="polite">Los resultados aparecerán aquí...</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
