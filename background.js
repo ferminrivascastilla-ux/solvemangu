@@ -1,34 +1,21 @@
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const MODEL = "openrouter/free";
+const HISTORY_LIMIT = 50;
 const PROMPTS = {
   detailed: "Resuelve este ejercicio de forma concisa y directa",
   quick: "Devuelve ÚNICAMENTE la letra u opción correcta (ejemplo: A, B, C, D o 1, 2, 3, 4) sin ninguna palabra adicional",
 };
 
 async function reconcileTab(tabId) {
-  const { openrouterApiKey } = await chrome.storage.local.get("openrouterApiKey");
   const target = { tabId };
-  if (!openrouterApiKey) {
-    try {
-      await chrome.scripting.executeScript({
-        target,
-        func: () => document.querySelectorAll("#solvemangu-left, #solvemangu-right, #solvemangu-indicator, #nvidia-assistant-left, #nvidia-assistant-right, #nvidia-assistant-result").forEach((element) => element.remove()),
-      });
-      await chrome.scripting.removeCSS({ target, files: ["styles.css"] });
-    } catch {
-      // Browser-internal pages cannot be scripted.
-    }
-    return;
-  }
-
   try {
     await chrome.scripting.insertCSS({ target, files: ["styles.css"] });
     await chrome.scripting.executeScript({
       target,
       files: ["node_modules/tesseract.js/dist/tesseract.min.js", "content.js"],
     });
-  } catch {
-    // Browser-internal pages and restricted origins cannot be scripted.
+  } catch (error) {
+    console.warn(`SolveMangu: no se pudo activar en la pestaña ${tabId}.`, error);
   }
 }
 
@@ -39,7 +26,8 @@ async function reconcileAllTabs() {
 
 async function saveHistory(entry) {
   const { queryHistory = [] } = await chrome.storage.local.get("queryHistory");
-  await chrome.storage.local.set({ queryHistory: [entry, ...queryHistory] });
+  const entries = Array.isArray(queryHistory) ? queryHistory : [];
+  await chrome.storage.local.set({ queryHistory: [entry, ...entries].slice(0, HISTORY_LIMIT) });
 }
 
 async function captureVisibleTab(tab) {

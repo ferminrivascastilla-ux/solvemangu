@@ -6,11 +6,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const activeKey = document.getElementById("activeKey");
   const deleteButton = document.getElementById("deleteKey");
   const message = document.getElementById("message");
+  const historySection = document.getElementById("historySection");
   const historyContainer = document.getElementById("history");
   const logoMenuButton = document.getElementById("logoMenuButton");
   const buttonVisibility = document.getElementById("buttonVisibility");
   const visibilityOptions = document.getElementById("visibilityOptions");
-  const visibilityValues = ["off", "camouflaged", "visible"];
+  const visibilityValues = ["off", "invisible", "camouflaged", "visible"];
 
   function showMessage(text, isError = false) {
     message.textContent = text;
@@ -65,9 +66,10 @@ document.addEventListener("DOMContentLoaded", () => {
       "queryHistory",
       "buttonVisibility",
     ]);
-    const selectedVisibility = visibilityValues.includes(savedVisibility) ? savedVisibility : "camouflaged";
+    const selectedVisibility = visibilityValues.includes(savedVisibility) ? savedVisibility : "invisible";
     const configured = Boolean(openrouterApiKey);
     activeKey.hidden = !configured;
+    historySection.hidden = !configured;
     keyForm.hidden = false;
     keyLabel.textContent = configured ? "Cambiar API Key de OpenRouter" : "Configura tu API Key de OpenRouter";
     apiKeyInput.required = !configured;
@@ -122,7 +124,10 @@ document.addEventListener("DOMContentLoaded", () => {
     saveButton.disabled = true;
     try {
       await chrome.storage.local.set({ openrouterApiKey: apiKey });
-      await chrome.runtime.sendMessage({ type: "KEY_UPDATED" });
+      const result = await chrome.runtime.sendMessage({ type: "KEY_UPDATED" });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
       showMessage("Clave guardada. Los botones están activados en las páginas compatibles.");
       await refresh();
     } catch (error) {
@@ -136,8 +141,11 @@ document.addEventListener("DOMContentLoaded", () => {
     deleteButton.disabled = true;
     try {
       await chrome.storage.local.remove("openrouterApiKey");
-      await chrome.runtime.sendMessage({ type: "KEY_UPDATED" });
-      showMessage("Clave eliminada y botones desactivados.");
+      const result = await chrome.runtime.sendMessage({ type: "KEY_UPDATED" });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+      showMessage("Clave eliminada. Añade otra clave para volver a usar los botones.");
       await refresh();
     } catch (error) {
       showMessage(`No se pudo eliminar la clave: ${error.message}`, true);

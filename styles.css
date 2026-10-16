@@ -9,21 +9,20 @@
   margin: 0 !important;
   padding: 0 !important;
   transform: translateY(-50%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.45) !important;
-  border-radius: 4px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
   outline: 0 !important;
   box-shadow: none !important;
   appearance: none !important;
   -webkit-appearance: none !important;
-  background: rgba(0, 0, 0, 0.04) !important;
+  background: transparent !important;
   background-image: none !important;
-  color: #fff !important;
-  -webkit-text-fill-color: rgba(255, 255, 255, 0.7) !important;
-  -webkit-text-stroke: 0.15px rgba(0, 0, 0, 0.8) !important;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.65) !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
   font: 500 11px/1 Arial, sans-serif !important;
   text-align: center !important;
-  opacity: 1 !important;
+  opacity: 0 !important;
   cursor: pointer !important;
   pointer-events: auto !important;
   touch-action: manipulation !important;
@@ -33,44 +32,70 @@
 
 #solvemangu-left { left: 0 !important; }
 #solvemangu-right { right: 0 !important; }
+
 .solvemangu-touch-zone[hidden],
 .solvemangu-touch-zone[data-visibility="off"] {
   display: none !important;
   pointer-events: none !important;
 }
 
+.solvemangu-touch-zone[data-visibility="invisible"] {
+  opacity: 0 !important;
+}
+
+.solvemangu-touch-zone[data-visibility="camouflaged"] {
+  width: 24px !important;
+  height: 44px !important;
+  border: 1px solid rgba(255, 255, 255, 0.65) !important;
+  border-radius: 3px !important;
+  background: transparent !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.8) !important;
+  font: 10px/1 Arial, sans-serif !important;
+  opacity: 0.55 !important;
+}
+
 .solvemangu-touch-zone[data-visibility="visible"] {
-  width: 42px !important;
+  width: 40px !important;
   height: 88px !important;
   border: 1px solid #4f7d00 !important;
   border-radius: 6px !important;
   background: #76b900 !important;
   color: #172000 !important;
   -webkit-text-fill-color: #172000 !important;
-  -webkit-text-stroke: 0 !important;
-  text-shadow: none !important;
   font: bold 15px/1 Arial, sans-serif !important;
+  opacity: 1 !important;
 }
 
-.solvemangu-touch-zone[data-visibility="visible"]:hover,
-.solvemangu-touch-zone[data-visibility="visible"]:active {
-  background: #68a500 !important;
+.solvemangu-touch-zone[data-visibility="invisible"]:hover,
+.solvemangu-touch-zone[data-visibility="invisible"]:active,
+.solvemangu-touch-zone[data-visibility="invisible"]:focus,
+.solvemangu-touch-zone[data-visibility="invisible"]:focus-visible {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  background-image: none !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+  opacity: 0 !important;
+  transition: none !important;
 }
 
-.solvemangu-touch-zone:hover,
-.solvemangu-touch-zone:active,
-.solvemangu-touch-zone:focus,
-.solvemangu-touch-zone:focus-visible {
+.solvemangu-touch-zone[data-visibility="camouflaged"]:hover,
+.solvemangu-touch-zone[data-visibility="camouflaged"]:active,
+.solvemangu-touch-zone[data-visibility="camouflaged"]:focus,
+.solvemangu-touch-zone[data-visibility="camouflaged"]:focus-visible {
   border: 1px solid rgba(255, 255, 255, 0.65) !important;
   outline: 0 !important;
   box-shadow: none !important;
-  background: rgba(0, 0, 0, 0.08) !important;
+  background: transparent !important;
   background-image: none !important;
-  color: rgba(255, 255, 255, 0.85) !important;
-  -webkit-text-fill-color: rgba(255, 255, 255, 0.85) !important;
-  -webkit-text-stroke: 0.15px rgba(0, 0, 0, 0.8) !important;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.65) !important;
-  opacity: 1 !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  -webkit-text-fill-color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: none !important;
+  opacity: 0.55 !important;
   transition: none !important;
 }
 
@@ -78,12 +103,16 @@
 .solvemangu-touch-zone[data-visibility="visible"]:active,
 .solvemangu-touch-zone[data-visibility="visible"]:focus,
 .solvemangu-touch-zone[data-visibility="visible"]:focus-visible {
-  border-color: #4f7d00 !important;
-  background: #68a500 !important;
+  border: 1px solid #4f7d00 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: #76b900 !important;
+  background-image: none !important;
   color: #172000 !important;
   -webkit-text-fill-color: #172000 !important;
-  -webkit-text-stroke: 0 !important;
   text-shadow: none !important;
+  opacity: 1 !important;
+  transition: none !important;
 }
 
 #solvemangu-indicator {

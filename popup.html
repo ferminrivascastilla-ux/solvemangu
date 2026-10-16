@@ -57,9 +57,10 @@
   <section class="section" id="buttonVisibility" aria-labelledby="visibilityTitle" hidden>
     <h2 class="section-title" id="visibilityTitle">Visibilidad de los botones laterales</h2>
     <div id="visibilityOptions" role="radiogroup" aria-labelledby="visibilityTitle">
-      <label><input type="radio" name="buttonVisibility" value="off"> Apagados: no se muestran ni se pueden pulsar</label>
-      <label><input type="radio" name="buttonVisibility" value="camouflaged"> Camuflados: letra y borde finos, con fondo transparente</label>
-      <label><input type="radio" name="buttonVisibility" value="visible"> Visibles: botones con color de fondo</label>
+      <label><input type="radio" name="buttonVisibility" value="off"> 1. Desactivados: no aparecen ni se pueden pulsar</label>
+      <label><input type="radio" name="buttonVisibility" value="invisible"> 2. Invisibles: se pueden pulsar, pero no se ven</label>
+      <label><input type="radio" name="buttonVisibility" value="camouflaged"> 3. Camuflados: solo borde y letra, sin fondo</label>
+      <label><input type="radio" name="buttonVisibility" value="visible"> 4. Visibles: botones con fondo</label>
     </div>
   </section>
 
@@ -76,7 +77,7 @@
     <p id="message" role="status" aria-live="polite"></p>
   </section>
 
-  <section class="section" aria-labelledby="historyTitle">
+  <section class="section" id="historySection" aria-labelledby="historyTitle" hidden>
     <div class="history-heading"><h2 class="section-title" id="historyTitle">Historial de consultas</h2></div>
     <div id="history" aria-live="polite"></div>
   </section>

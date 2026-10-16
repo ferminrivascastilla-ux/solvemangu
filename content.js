@@ -3,20 +3,15 @@
     { id: "solvemangu-left", mode: "detailed", label: "Resolver ejercicio y copiar respuesta", symbol: "L" },
     { id: "solvemangu-right", mode: "quick", label: "Mostrar respuesta rápida tipo test", symbol: "R" },
   ];
+  let operationInProgress = false;
 
   async function initializeAssistant() {
-    const { openrouterApiKey, buttonVisibility } = await chrome.storage.local.get([
-      "openrouterApiKey",
-      "buttonVisibility",
-    ]);
-    if (!openrouterApiKey) {
-      return;
-    }
+    const { buttonVisibility } = await chrome.storage.local.get("buttonVisibility");
 
     function applyButtonVisibility(visibility) {
-      const selectedVisibility = ["off", "camouflaged", "visible"].includes(visibility)
+      const selectedVisibility = ["off", "invisible", "camouflaged", "visible"].includes(visibility)
         ? visibility
-        : "camouflaged";
+        : "invisible";
       buttons.forEach(({ id }) => {
         const button = document.getElementById(id);
         if (button) {
@@ -52,6 +47,11 @@
         button.title = config.label;
         button.setAttribute("aria-label", config.label);
         button.addEventListener("click", async () => {
+          if (operationInProgress) {
+            return;
+          }
+
+          operationInProgress = true;
           showIndicator("...");
           try {
             const capture = await chrome.runtime.sendMessage({ type: "CAPTURE_VISIBLE_TAB" });
@@ -59,19 +59,28 @@
               throw new Error(capture.error);
             }
 
-            const worker = await Tesseract.createWorker("spa", 1, {
-              workerPath: chrome.runtime.getURL("node_modules/tesseract.js/dist/worker.min.js"),
-              corePath: chrome.runtime.getURL("node_modules/tesseract.js-core"),
-              langPath: chrome.runtime.getURL("node_modules/@tesseract.js-data/spa/4.0.0"),
-              gzip: true,
-              workerBlobURL: false,
-            });
             let ocrText = "";
+            let worker;
             try {
+              worker = await Tesseract.createWorker("spa", 1, {
+                workerPath: chrome.runtime.getURL("node_modules/tesseract.js/dist/worker.min.js"),
+                corePath: chrome.runtime.getURL("node_modules/tesseract.js-core"),
+                langPath: chrome.runtime.getURL("node_modules/@tesseract.js-data/spa/4.0.0"),
+                gzip: true,
+                workerBlobURL: false,
+              });
               const recognition = await worker.recognize(capture.imageDataUrl);
               ocrText = recognition.data.text || "";
+            } catch (error) {
+              console.warn("SolveMangu: OCR local no disponible; se enviará la captura para analizarla.", error);
             } finally {
-              await worker.terminate();
+              if (worker) {
+                try {
+                  await worker.terminate();
+                } catch (error) {
+                  console.warn("SolveMangu: no se pudo cerrar el trabajador OCR.", error);
+                }
+              }
             }
 
             const result = await chrome.runtime.sendMessage({
@@ -91,6 +100,8 @@
           } catch (error) {
             console.error("SolveMangu:", error);
             showIndicator("🔺", 1600);
+          } finally {
+            operationInProgress = false;
           }
         });
         document.documentElement.append(button);
