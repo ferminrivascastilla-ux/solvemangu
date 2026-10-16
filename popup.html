@@ -5,40 +5,65 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NVIDIA AI Vision</title>
   <style>
-    body { width: 340px; font-family: Arial, sans-serif; padding: 16px; margin: 0; background: #f5f7f2; color: #20251c; }
-    h1 { margin: 0 0 16px; font-size: 18px; }
-    .field { margin-bottom: 13px; }
-    label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 5px; color: #4c5545; }
-    input[type="password"], input[type="file"], textarea { width: 100%; box-sizing: border-box; padding: 8px; border: 1px solid #b9c0b3; border-radius: 4px; background: #fff; color: #20251c; }
-    textarea { resize: vertical; }
-    button { width: 100%; padding: 10px; background: #76b900; color: #142000; border: 0; border-radius: 4px; font-weight: bold; cursor: pointer; }
-    button:hover { background: #67a300; }
+    :root { color-scheme: light; font-family: Georgia, "Times New Roman", serif; color: #1b241c; background: #f2f4ed; }
+    * { box-sizing: border-box; }
+    body { width: 360px; max-height: 560px; margin: 0; padding: 18px; overflow-y: auto; }
+    header { display: flex; align-items: center; gap: 10px; padding-bottom: 14px; border-bottom: 1px solid #cbd1c4; }
+    .mark { display: grid; place-items: center; width: 32px; height: 32px; background: #76b900; color: #172000; font: bold 16px Arial, sans-serif; }
+    h1 { margin: 0; font-size: 19px; font-weight: 600; }
+    .eyebrow { margin: 2px 0 0; color: #64705e; font: 10px Arial, sans-serif; letter-spacing: 0; text-transform: uppercase; }
+    .section { padding: 15px 0; border-bottom: 1px solid #cbd1c4; }
+    .section-title { margin: 0 0 10px; font: bold 12px Arial, sans-serif; }
+    label { display: block; margin-bottom: 5px; color: #56604f; font: bold 11px Arial, sans-serif; }
+    input { width: 100%; padding: 9px 10px; border: 1px solid #aeb8a5; border-radius: 3px; background: #fff; color: #1b241c; font: 13px Arial, sans-serif; }
+    button { min-height: 34px; padding: 8px 11px; border: 0; border-radius: 3px; background: #76b900; color: #172000; font: bold 12px Arial, sans-serif; cursor: pointer; }
+    button:hover { background: #68a500; }
     button:disabled { cursor: wait; opacity: 0.65; }
-    #output { margin-top: 14px; max-height: 220px; overflow-y: auto; background: #fff; padding: 10px; border: 1px solid #d2d7cd; border-radius: 4px; font-size: 13px; line-height: 1.45; white-space: pre-wrap; overflow-wrap: anywhere; }
-    .status { color: #626a5b; font-style: italic; }
-    .error { color: #a12828; }
+    .secondary { border: 1px solid #aeb8a5; background: transparent; color: #303a2d; }
+    .secondary:hover { background: #e3e8dc; }
+    .danger { border: 1px solid #c5a6a0; background: transparent; color: #8b3329; }
+    .key-row, .history-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .key-status { display: flex; align-items: center; gap: 6px; color: #456c17; font: 12px Arial, sans-serif; }
+    .key-status::before { width: 7px; height: 7px; border-radius: 50%; background: #76b900; content: ""; }
+    #keyForm { display: grid; gap: 8px; }
+    #keyForm[hidden], #activeKey[hidden] { display: none; }
+    #message { min-height: 16px; margin: 8px 0 0; color: #5f6a58; font: 11px Arial, sans-serif; }
+    #message.error { color: #a12828; }
+    .history-heading { margin-bottom: 8px; }
+    .history-heading .section-title { margin: 0; }
+    #history { max-height: 300px; overflow-y: auto; }
+    .empty { margin: 10px 0 0; color: #65705e; font: 12px Arial, sans-serif; }
+    .entry { padding: 9px 0; border-top: 1px solid #d7dcd1; }
+    .entry summary { cursor: pointer; font: 12px Arial, sans-serif; }
+    .entry time { display: block; margin-top: 4px; color: #6d7667; font-size: 10px; }
+    .entry img { display: block; width: 100%; max-height: 160px; margin-top: 9px; object-fit: contain; background: #e4e8df; }
+    .answer { margin: 8px 0 0; white-space: pre-wrap; overflow-wrap: anywhere; font: 12px/1.45 Arial, sans-serif; }
+    .prompt { margin: 8px 0 0; color: #56604f; font: italic 11px/1.4 Arial, sans-serif; }
   </style>
 </head>
 <body>
-  <h1>NVIDIA AI Vision</h1>
+  <header>
+    <div class="mark" aria-hidden="true">N</div>
+    <div><h1>NVIDIA AI Vision</h1><p class="eyebrow">Asistente de pantalla</p></div>
+  </header>
 
-  <div class="field">
-    <label for="apiKey">NVIDIA API Key</label>
-    <input type="password" id="apiKey" placeholder="nvapi-..." autocomplete="off">
-  </div>
+  <section class="section" aria-labelledby="keyTitle">
+    <div class="key-row" id="activeKey" hidden>
+      <p class="section-title key-status" id="keyTitle">API Key activa</p>
+      <button class="danger" id="deleteKey" type="button">Borrar</button>
+    </div>
+    <form id="keyForm">
+      <label for="apiKey" id="keyLabel">Configura tu NVIDIA API Key</label>
+      <input type="password" id="apiKey" placeholder="nvapi-..." autocomplete="off" required>
+      <button id="saveKey" type="submit">Guardar clave</button>
+    </form>
+    <p id="message" role="status" aria-live="polite"></p>
+  </section>
 
-  <div class="field">
-    <label for="imageInput">Selecciona una imagen</label>
-    <input type="file" id="imageInput" accept="image/*">
-  </div>
-
-  <div class="field">
-    <label for="prompt">Pregunta para la IA</label>
-    <textarea id="prompt" rows="3">What is in this image?</textarea>
-  </div>
-
-  <button id="sendBtn" type="button">Analizar imagen</button>
-  <div id="output" class="status" role="status" aria-live="polite">Los resultados aparecerán aquí...</div>
+  <section class="section" aria-labelledby="historyTitle">
+    <div class="history-heading"><h2 class="section-title" id="historyTitle">Historial de consultas</h2></div>
+    <div id="history" aria-live="polite"></div>
+  </section>
 
   <script src="popup.js"></script>
 </body>

@@ -1,6 +1,6 @@
 # NVIDIA Multimodal Assistant
 
-Extensión local de Chrome (Manifest V3) para enviar una imagen y una pregunta al modelo multimodal de NVIDIA.
+Extensión local de Chrome (Manifest V3) para resolver ejercicios visibles en una página con el modelo multimodal de NVIDIA.
 
 ## Instalar en modo desarrollador
 
@@ -12,12 +12,13 @@ Extensión local de Chrome (Manifest V3) para enviar una imagen y una pregunta a
 
 ## Usar
 
-1. En el popup, introduce tu clave de API de NVIDIA.
-2. Selecciona una imagen desde tu computadora y escribe la pregunta.
-3. Pulsa **Analizar imagen**. La respuesta aparecerá en el popup.
+1. Pulsa el icono de la extensión y guarda tu NVIDIA API Key.
+2. En una página compatible, pulsa el control tenue del borde izquierdo para resolver el ejercicio y copiar la respuesta.
+3. Pulsa el control del borde derecho para mostrar brevemente la opción correcta tipo test.
+4. Abre el popup para revisar las capturas y respuestas guardadas, cambiar la clave o borrarla.
 
-La extensión llama a `https://integrate.api.nvidia.com/v1/chat/completions` usando el modelo `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`. Necesita una clave válida y conexión a Internet.
+La extensión llama a `https://integrate.api.nvidia.com/v1/chat/completions` usando el modelo `nvidia/nemotron-3-nano-omni-30b-a3b-reasoning`. Necesita una clave válida y conexión a Internet. Chrome bloquea la inyección en páginas internas como `chrome://` y en algunas páginas protegidas.
 
 ## Almacenamiento de la clave
 
-La clave se guarda en `chrome.storage.local` para volver a cargarla al abrir el popup. Este almacenamiento es local al perfil, pero no cifra la clave ni la protege de otras personas o programas con acceso a ese perfil. Usa la extensión solo en un perfil de confianza y no compartas la carpeta de datos del navegador.
+La clave, las capturas y las respuestas se guardan en `chrome.storage.local`. Este almacenamiento es local al perfil, pero no cifra los datos ni los protege de otras personas o programas con acceso a ese perfil. Usa la extensión solo en un perfil de confianza y no compartas la carpeta de datos del navegador.

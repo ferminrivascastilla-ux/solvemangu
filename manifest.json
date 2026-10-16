@@ -4,12 +4,21 @@
   "version": "1.0",
   "description": "Analiza imágenes locales usando la API multimodal de NVIDIA",
   "permissions": [
-    "storage"
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabs",
+    "clipboardWrite",
+    "unlimitedStorage"
   ],
   "host_permissions": [
-    "https://integrate.api.nvidia.com/*"
+    "https://integrate.api.nvidia.com/*",
+    "<all_urls>"
   ],
   "action": {
     "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "background.js"
   }
 }
